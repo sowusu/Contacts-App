@@ -31,19 +31,18 @@ CREATE TABLE Phone(
     PRIMARY KEY(Phone_id),
     CONSTRAINT fk_phone_contact_id
         FOREIGN KEY (Contact_id)
-        REFERENCES Phone (Phone_id)
+        REFERENCES Contact (Contact_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE);
 
 CREATE TABLE Date(
-    Phone_id      INT     NOT NULL         AUTO_INCREMENT,
+    Date_id      INT     NOT NULL         AUTO_INCREMENT,
     Contact_id    INT,
-    Phone_type    ENUM('HOME', 'WORK', 'CELL', 'OTHER'),
-    Area_code         CHAR(3),
-    Number           CHAR(7),
-    PRIMARY KEY(Phone_id),
-    CONSTRAINT fk_phone_contact_id
+    Date_type    ENUM('BDAY', 'ANNIV', 'OTHER'),
+    Date         Date,
+    PRIMARY KEY(Date_id),
+    CONSTRAINT fk_date_contact_id
         FOREIGN KEY (Contact_id)
-        REFERENCES Phone (Phone_id)
+        REFERENCES Contact (Contact_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE);

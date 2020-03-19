@@ -56,7 +56,7 @@
         <div class="row">
         <div class="col-md-7" id="detail-pane">
                 <h1><span class="fa fa-user"></span>&nbsp;&nbsp;&nbsp;<span id="Fname">John</span> <span id="Mname"></span> <span id="Lname">Appleseed</span></h1>
-                <ul>  
+                <ul id="apd-details">  
                     <h6>Address</h6>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item l-item">Address 1</li>
@@ -79,7 +79,7 @@
             <div class="col-md-5 " id="list-pane">
                 <div class="form-group has-search">
                     <span class="fa fa-search form-control-feedback"></span>
-                    <input type="text" class="form-control" placeholder="'Fred' or '1997-05-01' or '1 Cupertino ...''" aria-label="Search">
+                    <input id="searchBox" type="text" class="form-control" placeholder="'Fred' or '1997-05-01' or '1 Cupertino ...''" aria-label="Search">
                 </div>
                 <ul id="contact-list-component" class="list-group overflow-auto">
                     <?php
