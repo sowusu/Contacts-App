@@ -17,6 +17,75 @@ $("#searchBox").keyup(function(){
     }
 });
 
+$(".add-button").click(function(){
+    let elt = this.getAttribute("id").split("-")[0];
+    let parent = document.getElementById(elt + "-details");
+    /*remove pre-existing*/
+    let old = document.getElementById(elt + "NewEditListItem");
+    if (old !== null ) old.remove();
+    let l_item = document.createElement("li");
+    parent.prepend(l_item);
+    let parts = ["new"];
+    l_item.classList.add("list-group-item", "l-item");
+    l_item.setAttribute("id", elt + "NewEditListItem");
+    switch(elt){
+        case "address":
+            $(l_item).append('<div id="addressEdit-' + parts[0] + '" class="form-row">' +
+                                '<div class="col-md-7 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="addEdit-' + parts[0]+ '" placeholder="1 Infinite" value=""required></div>' + 
+                                '<div class="col-md-5 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="cityEdit-' + parts[0]+ '" placeholder="Cupertino" value="" ></div>' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="stateEdit-' + parts[0]+ '" placeholder="California" value="" required></div>' + 
+                                '<div class="col-md-3 mb-3 form-group"><input type="text" class="form-control" id="zipEdit-' + parts[0]+ '" placeholder="45321" value="" required></div>' +
+                                '<div class="col-md-3 mb-3 form-group">' +
+                                    '<select class="form-control" name="address_type" id="addTypeEdit-' + parts[0]+ '" >' + 
+                                        '<option value="HOME">HOME</option>' + 
+                                        '<option value="WORK">WORK</option>' +
+                                        '<option value="OTHER">OTHER</option>' +
+                                    '</select>' +
+                                '</div>' +
+                            '</div>');
+        break;
+        case "date":
+            $(l_item).append(
+                                '<div id="dateEdit-' + parts[0] + '" class="form-row">' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="calDateEdit-' + parts[0]+ '" placeholder="1999-09-09" value=""required></div>' +
+                                '<div class="col-md-3 mb-3 form-group"><select name="date_type" class="form-control" id="dateTypeEdit-' + parts[0]+ '" ><option value="BDAY">BDAY</option><option value="ANNIV">ANNIV</option><option value="OTHER">OTHER</option></select></div></div>'
+                            );
+        break;
+        case "phone":
+            $(l_item).append(
+                                '<div id="phoneEdit-' + parts[0] + '" class="form-row"><div class="col-md-3 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="areaCodeEdit-' + parts[0]+ '" placeholder="123" value=""required></div>' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="numberEdit-' + parts[0]+ '" placeholder="456789" value=""required></div>' +
+                                '<div class="col-md-3 mb-3 form-group"><select name="phone_type" class="form-control" id="phoneTypeEdit-' + parts[0]+ '" >' +
+                                        '<option value="HOME">HOME</option><option value="WORK">WORK</option><option value="CELL">CELL</option><option value="FAX">FAX</option><option value="OTHER">OTHER</option></select></div></div>'
+                            );
+        break;
+    }
+    let s_button = document.createElement("button");
+    let d_button = document.createElement("button");
+    s_button.addEventListener("click", function(){
+                saveButtonPressed(this);
+            });
+    d_button.addEventListener("click", function(){
+                delButtonPressed(this);
+            });
+    s_button.classList.add("btn", "side-button", "save-button");
+    d_button.classList.add("btn", "side-button", "del-button");
+    let s_span = document.createElement("span");
+    let d_span = document.createElement("span");
+    s_span.classList.add("fa", "fa-save");
+    d_span.classList.add("fa", "fa-times-circle");
+    s_button.append(s_span);
+    d_button.append(d_span);
+    s_button.setAttribute("id", "save-" + elt + "-" + parts[0]);
+    d_button.setAttribute("id", "del-" + elt + "-" + parts[0]);
+    document.getElementById(elt + "Edit-" + parts[0]).append(s_button);
+    document.getElementById(elt + "Edit-" + parts[0]).append(d_button);
+            
+});
+
 $("#editNameButtonPress").click(function(){
     document.getElementById("nameEdit").style.display = "flex";
     document.getElementById("nameShow").style.display = "none";
@@ -161,18 +230,58 @@ function editButtonPressed(button_target){
     const psis = button_target.getAttribute("id").split("-");
     document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "none";
     document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "flex";
+
+    /*populate previous values*/
+    let full_text = document.getElementById([psis[1] + "Show", psis[2]].join("-")).innerText;
+    setEditFields(psis[1], full_text, psis[2]);
+}
+
+function setEditFields(table, details, elt_id){
+    let type_and_rest = details.split("|");
+    switch(table){
+        case "address":
+            document.getElementById("addTypeEdit-" + elt_id).value = type_and_rest[0].trim();
+            let addDetails = type_and_rest[1].split(",");
+            document.getElementById("addEdit-" + elt_id).value = addDetails[0].trim();
+            document.getElementById("cityEdit-" + elt_id).value = addDetails[1].trim();
+            document.getElementById("stateEdit-" + elt_id).value = addDetails[2].trim();
+            document.getElementById("zipEdit-" + elt_id).value = addDetails[3].trim();
+        break;
+        case "phone":
+                document.getElementById("phoneTypeEdit-" + elt_id).value = type_and_rest[0].trim();
+                let phoneDetails = type_and_rest[1].split(")");
+                document.getElementById("areaCodeEdit-" + elt_id).value = phoneDetails[0].trim().substr(1);
+                document.getElementById("numberEdit-" + elt_id).value = phoneDetails[1].trim();
+        break;
+        case "date":
+                document.getElementById("dateTypeEdit-" + elt_id).value = type_and_rest[0].trim();
+                document.getElementById("calDateEdit-" + elt_id).value = type_and_rest[1].trim();
+        break;
+    }
 }
 
 function saveButtonPressed(button_target){
     const psis = button_target.getAttribute("id").split("-");
-    document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
-    document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+    if (psis[2] == "new"){
+        document.getElementById(psis[1] + "NewEditListItem").remove();
+    }
+    else{
+        document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
+        document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+
+    }
 }
 
 function delButtonPressed(button_target){
     const psis = button_target.getAttribute("id").split("-");
-    document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
-    document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+    if (psis[2] == "new"){
+        document.getElementById(psis[1] + "NewEditListItem").remove();
+    }
+    else{
+        document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
+        document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+    
+    }
 }
 
 function setDetails(anchor_target){
@@ -227,10 +336,10 @@ function addDetail(table, table_details_array){
                                 '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="stateEdit-' + parts[0]+ '" placeholder="California" value="" required></div>' + 
                                 '<div class="col-md-3 mb-3 form-group"><input type="text" class="form-control" id="zipEdit-' + parts[0]+ '" placeholder="45321" value="" required></div>' +
                                 '<div class="col-md-3 mb-3 form-group">' +
-                                    '<select class="form-control" id="addTypeEdit-' + parts[0]+ '" >' + 
-                                        '<option>HOME</option>' + 
-                                        '<option>WORK</option>' +
-                                        '<option>OTHER</option>' +
+                                    '<select class="form-control" name="address_type" id="addTypeEdit-' + parts[0]+ '" >' + 
+                                        '<option value="HOME">HOME</option>' + 
+                                        '<option value="WORK">WORK</option>' +
+                                        '<option value="OTHER">OTHER</option>' +
                                     '</select>' +
                                 '</div>' +
                             '</div>');
@@ -239,8 +348,8 @@ function addDetail(table, table_details_array){
                             document.getElementById("date-details").append(l_item);
                             $(l_item).append(
                                 '<div id="dateEdit-' + parts[0] + '" class="form-row detail-edit">' +
-                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="dateEdit-' + parts[0]+ '" placeholder="1999-09-09" value=""required></div>' +
-                                '<div class="col-md-3 mb-3 form-group"><select class="form-control" id="phoneTypeEdit-' + parts[0]+ '" ><option>BDAY</option><option>ANNIV</option><option>OTHER</option></select></div></div>'
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="calDateEdit-' + parts[0]+ '" placeholder="1999-09-09" value=""required></div>' +
+                                '<div class="col-md-3 mb-3 form-group"><select name="date_type" class="form-control" id="dateTypeEdit-' + parts[0]+ '" ><option value="BDAY">BDAY</option><option value="ANNIV">ANNIV</option><option value="OTHER">OTHER</option></select></div></div>'
                             );
                             
                 break;
@@ -250,8 +359,8 @@ function addDetail(table, table_details_array){
                                 '<div id="phoneEdit-' + parts[0] + '" class="form-row detail-edit"><div class="col-md-3 mb-3 form-group">' +
                                     '<input type="text" class="form-control" id="areaCodeEdit-' + parts[0]+ '" placeholder="123" value=""required></div>' +
                                 '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="numberEdit-' + parts[0]+ '" placeholder="456789" value=""required></div>' +
-                                '<div class="col-md-3 mb-3 form-group"><select class="form-control" id="phoneTypeEdit-' + parts[0]+ '" >' +
-                                        '<option>HOME</option><option>WORK</option><option>CELL</option><option>FAX</option><option>OTHER</option></select></div></div>'
+                                '<div class="col-md-3 mb-3 form-group"><select name="phone_type" class="form-control" id="phoneTypeEdit-' + parts[0]+ '" >' +
+                                        '<option value="HOME">HOME</option><option value="WORK">WORK</option><option value="CELL">CELL</option><option value="FAX">FAX</option><option value="OTHER">OTHER</option></select></div></div>'
                             );
                 break;
             }

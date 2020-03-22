@@ -144,20 +144,7 @@
                         </button>
                     </h6>
                     <ul id="address-details" class="list-group list-group-flush">
-                        <li class="list-group-item l-item">
-                            <div id="addressShow">Address 1</div>
-                            
-                            <button class="btn side-button save-button">
-                                <span class="fa fa-save"></span>
-                            </button>
-                            <button class="btn side-button del-button">
-                                <span class="fa fa-times-circle"></span>
-                            </button>
-                            <button class="btn side-button edit-button">
-                                <span class="fa fa-edit"></span>
-                            </button>
-                        </li>
-                        <li class="list-group-item l-item">Address 2</li>
+                        <!-- content generated with js -->
                     </ul>
                     <h6>Phone
                         <button id="phone-add" class="btn side-button add-button">
@@ -165,27 +152,7 @@
                         </button>
                     </h6>
                     <ul id="phone-details" class="list-group list-group-flush">
-                        <li class="list-group-item l-item">
-                            Phone 1
-                            <div id="phoneEdit" class="form-row detail-edit">
-                                <div class="col-md-3 mb-3 form-group">
-                                    <input type="text" class="form-control" id="areaCodeEdit" placeholder="123" value=""required>
-                                </div>
-                                <div class="col-md-6 mb-3 form-group">
-                                    <input type="text" class="form-control" id="numberEdit" placeholder="456789" value=""required>
-                                </div>
-                                <div class="col-md-3 mb-3 form-group">
-                                    <select class="form-control" id="phoneTypeEdit">
-                                        <option>HOME</option>
-                                        <option>WORK</option>
-                                        <option>CELL</option>
-                                        <option>FAX</option>
-                                        <option>OTHER</option>
-                                    </select>
-                                </div>  
-                            </div>
-                        </li>
-                        <li class="list-group-item l-item">Phone 2</li>
+                        <!-- content generated with js -->
                     </ul>
                     <h6>Dates
                         <button id="date-add" class="btn side-button add-button">
@@ -193,22 +160,7 @@
                         </button>
                     </h6>
                     <ul id="date-details" class="list-group list-group-flush">
-                        <li class="list-group-item l-item">
-                            Date 1
-                            <div id="dateEdit" class="form-row detail-edit">
-                                <div class="col-md-6 mb-3 form-group">
-                                    <input type="text" class="form-control" id="dateEdit" placeholder="1999-09-09" value=""required>
-                                </div>
-                                <div class="col-md-3 mb-3 form-group">
-                                    <select class="form-control" id="phoneTypeEdit">
-                                        <option>BDAY</option>
-                                        <option>ANNIV</option>
-                                        <option>OTHER</option>
-                                    </select>
-                                </div>  
-                            </div>
-                        </li>
-                        <li class="list-group-item l-item">Date 2</li>
+                        <!-- content generated with js -->
                     </ul>
                 </ul>
                 <button type="button" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#exampleModal">New Contact</button>
