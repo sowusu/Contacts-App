@@ -28,19 +28,29 @@ $("#editNameButtonPress").click(function(){
 $("#saveNameButtonPress").click(function(){
     document.getElementById("nameEdit").style.display = "none";
     document.getElementById("nameShow").style.display = "flex";
+    const c_id = document.querySelector("[data-id]").getAttribute("data-id");
+    const fn = document.getElementById("nameEditFirstName").value;
+    const mn = document.getElementById("nameEditMiddleName").value;
+    const ln = document.getElementById("nameEditLastName").value;
+    
+
+    /*db update*/
     $.post(
         "update_insert_contacts.php",
         {
-            contact_id: document.querySelector("[data-id]").getAttribute("data-id"),
-            first_name: document.getElementById("nameEditFirstName").value,
-            middle_name: document.getElementById("nameEditMiddleName").value,
-            last_name: document.getElementById("nameEditLastName").value,
+            contact_id: c_id,
+            first_name: fn,
+            middle_name: mn,
+            last_name: ln,
             update: "true"
         }
     ).done(function(data){
-        //console.log(data);
-        //console.log(JSON.parse(data));
-        loadListWrapper();
+        /*updadate li item*/
+        document.getElementById(c_id).innerText = [fn, mn, ln].join(" ");
+        /*update detail view*/
+        document.getElementById("Fname").innerText = fn;
+        document.getElementById("Mname").innerText = mn;
+        document.getElementById("Lname").innerText = ln;
     });
 
 });
@@ -147,6 +157,24 @@ function initDetailPane() {
     setDetails(document.querySelector("#contact-list-component a:first-child"));
 }
 
+function editButtonPressed(button_target){
+    const psis = button_target.getAttribute("id").split("-");
+    document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "none";
+    document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "flex";
+}
+
+function saveButtonPressed(button_target){
+    const psis = button_target.getAttribute("id").split("-");
+    document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
+    document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+}
+
+function delButtonPressed(button_target){
+    const psis = button_target.getAttribute("id").split("-");
+    document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
+    document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+}
+
 function setDetails(anchor_target){
     let name = anchor_target.innerText.split(" ");
     document.querySelector("#nameShow h1").setAttribute("data-id", anchor_target.id);
@@ -162,7 +190,9 @@ function setDetails(anchor_target){
         default: setNameMany(name)
     }
     /*remove current children*/
-    document.getElementById("apd-details").innerHTML = "";
+    document.getElementById("address-details").innerHTML = "";
+    document.getElementById("phone-details").innerHTML = "";
+    document.getElementById("date-details").innerHTML = "";
 
     if(undefined != anchor_target.dataset.address){
         let addresses = anchor_target.dataset.address.split("|");
@@ -176,45 +206,89 @@ function setDetails(anchor_target){
         let phones = anchor_target.dataset.phone.split("|");
         addDetail("Phone", phones);
     }    
-
-    
-    
-    
-    
-
 }
 
 function addDetail(table, table_details_array){
-    let header = document.createElement("h6");
-    let ulist = document.createElement("ul");
-    ulist.classList.add("list-group", "list-group-flush");
     if (table_details_array[0].length > 0){
         for (item of table_details_array){
             parts = item.split("#");
             let l_item = document.createElement("li");
             l_item.classList.add("list-group-item", "l-item");
+            let w_div = document.createElement("div");
+            w_div.setAttribute("id", table.toLowerCase() + "Show-" + parts[0]);
             switch (table){
-                case "Address": l_item.innerText = parts[1] + " | " + parts[2] + ", " + parts[3] + ", " + parts[4] + ", " + parts[5];
+                case "Address": w_div.innerText = parts[1] + " | " + parts[2] + ", " + parts[3] + ", " + parts[4] + ", " + parts[5];
+                                document.getElementById("address-details").append(l_item);
+                                $(l_item).append('<div id="addressEdit-' + parts[0] + '" class="form-row detail-edit">' +
+                                '<div class="col-md-7 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="addEdit-' + parts[0]+ '" placeholder="1 Infinite" value=""required></div>' + 
+                                '<div class="col-md-5 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="cityEdit-' + parts[0]+ '" placeholder="Cupertino" value="" ></div>' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="stateEdit-' + parts[0]+ '" placeholder="California" value="" required></div>' + 
+                                '<div class="col-md-3 mb-3 form-group"><input type="text" class="form-control" id="zipEdit-' + parts[0]+ '" placeholder="45321" value="" required></div>' +
+                                '<div class="col-md-3 mb-3 form-group">' +
+                                    '<select class="form-control" id="addTypeEdit-' + parts[0]+ '" >' + 
+                                        '<option>HOME</option>' + 
+                                        '<option>WORK</option>' +
+                                        '<option>OTHER</option>' +
+                                    '</select>' +
+                                '</div>' +
+                            '</div>');
                 break;
-                case "Date": l_item.innerText = parts[1] + " | " + parts[2];
+                case "Date": w_div.innerText = parts[1] + " | " + parts[2];
+                            document.getElementById("date-details").append(l_item);
+                            $(l_item).append(
+                                '<div id="dateEdit-' + parts[0] + '" class="form-row detail-edit">' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="dateEdit-' + parts[0]+ '" placeholder="1999-09-09" value=""required></div>' +
+                                '<div class="col-md-3 mb-3 form-group"><select class="form-control" id="phoneTypeEdit-' + parts[0]+ '" ><option>BDAY</option><option>ANNIV</option><option>OTHER</option></select></div></div>'
+                            );
+                            
                 break;
-                case "Phone": l_item.innerText = parts[1] + " | " + "(" + parts[2] + ")" + parts[3];
+                case "Phone": w_div.innerText = parts[1] + " | " + "(" + parts[2] + ")" + parts[3];
+                            document.getElementById("phone-details").append(l_item);
+                            $(l_item).append(
+                                '<div id="phoneEdit-' + parts[0] + '" class="form-row detail-edit"><div class="col-md-3 mb-3 form-group">' +
+                                    '<input type="text" class="form-control" id="areaCodeEdit-' + parts[0]+ '" placeholder="123" value=""required></div>' +
+                                '<div class="col-md-6 mb-3 form-group"><input type="text" class="form-control" id="numberEdit-' + parts[0]+ '" placeholder="456789" value=""required></div>' +
+                                '<div class="col-md-3 mb-3 form-group"><select class="form-control" id="phoneTypeEdit-' + parts[0]+ '" >' +
+                                        '<option>HOME</option><option>WORK</option><option>CELL</option><option>FAX</option><option>OTHER</option></select></div></div>'
+                            );
                 break;
             }
-            ulist.append(l_item);
+            l_item.append(w_div);
+           
+            let s_button = document.createElement("button");
+            let e_button = document.createElement("button");
+            let d_button = document.createElement("button");
+            e_button.addEventListener("click", function(){
+                editButtonPressed(this);
+            })
+            s_button.addEventListener("click", function(){
+                saveButtonPressed(this);
+            })
+            d_button.addEventListener("click", function(){
+                delButtonPressed(this);
+            })
+            s_button.classList.add("btn", "side-button", "save-button");
+            e_button.classList.add("btn", "side-button", "edit-button");
+            d_button.classList.add("btn", "side-button", "del-button");
+            let s_span = document.createElement("span");
+            let e_span = document.createElement("span");
+            let d_span = document.createElement("span");
+            s_span.classList.add("fa", "fa-save");
+            e_span.classList.add("fa", "fa-edit");
+            d_span.classList.add("fa", "fa-times-circle");
+            s_button.append(s_span);
+            e_button.append(e_span);
+            d_button.append(d_span);
+            s_button.setAttribute("id", "save-" + table.toLowerCase() + "-" + parts[0]);
+            e_button.setAttribute("id", "edit-" + table.toLowerCase() + "-" + parts[0]);
+            d_button.setAttribute("id", "del-" + table.toLowerCase() + "-" + parts[0]);
+            w_div.append(e_button);
+            document.getElementById(table.toLowerCase() + "Edit-" + parts[0]).append(s_button);
+            document.getElementById(table.toLowerCase() + "Edit-" + parts[0]).append(d_button);
         } 
-    
-        switch (table){
-            case "Address": header.innerHTML = table;
-            break;
-            case "Date": header.innerHTML = table;
-            break;
-            case "Phone": header.innerHTML = table;
-            break;
-        }
         
-        document.getElementById("apd-details").appendChild(header);
-        document.getElementById("apd-details").appendChild(ulist);
     }
     
 

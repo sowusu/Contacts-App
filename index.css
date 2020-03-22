@@ -25,3 +25,29 @@
 #nameEdit{
     display: none;
 }
+
+.side-button{
+    font-size: 1.3em;
+    background-color: white;
+    border-color: white;
+}
+
+.add-button{
+    color: green;
+}
+
+.edit-button{
+    color: blue;
+}
+
+.del-button{
+    color: red;
+}
+
+.save-button{
+    color: lightseagreen;
+}
+
+.detail-edit{
+    display: none;
+}

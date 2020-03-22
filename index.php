@@ -109,7 +109,8 @@
         <div class="row">
         <div class="col-md-7" id="detail-pane">
                 <div class="row" id="nameShow">
-                    <div class="col-md-11"><h1><span class="fa fa-user"></span>&nbsp;&nbsp;&nbsp;<span id="Fname">John</span> <span id="Mname"></span> <span id="Lname">Appleseed</span></h1></div>
+                    <div class="col-md-11">
+                        <h1><span class="fa fa-user"></span>&nbsp;&nbsp;&nbsp;<span id="Fname">John</span> <span id="Mname"></span> <span id="Lname">Appleseed</span></h1></div>
                     <div class="col-md-1">
                         <button id="editNameButtonPress" type="button" class="btn btn-info">
                             <span class="fa fa-edit" aria-label="editName"></span>
@@ -135,25 +136,82 @@
                         </button>
                     </div>
                 </div>
-                <ul id="apd-details">
-                    <h6>Address</h6>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item l-item">Address 1</li>
+                <ul >
+                    <h6>
+                        Address
+                        <button id="address-add" class="btn side-button add-button">
+                            <span class="fa fa-plus-circle"></span>
+                        </button>
+                    </h6>
+                    <ul id="address-details" class="list-group list-group-flush">
+                        <li class="list-group-item l-item">
+                            <div id="addressShow">Address 1</div>
+                            
+                            <button class="btn side-button save-button">
+                                <span class="fa fa-save"></span>
+                            </button>
+                            <button class="btn side-button del-button">
+                                <span class="fa fa-times-circle"></span>
+                            </button>
+                            <button class="btn side-button edit-button">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                        </li>
                         <li class="list-group-item l-item">Address 2</li>
                     </ul>
-                    <h6>Phone</h6>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item l-item">Phone 1</li>
+                    <h6>Phone
+                        <button id="phone-add" class="btn side-button add-button">
+                            <span class="fa fa-plus-circle"></span>
+                        </button>
+                    </h6>
+                    <ul id="phone-details" class="list-group list-group-flush">
+                        <li class="list-group-item l-item">
+                            Phone 1
+                            <div id="phoneEdit" class="form-row detail-edit">
+                                <div class="col-md-3 mb-3 form-group">
+                                    <input type="text" class="form-control" id="areaCodeEdit" placeholder="123" value=""required>
+                                </div>
+                                <div class="col-md-6 mb-3 form-group">
+                                    <input type="text" class="form-control" id="numberEdit" placeholder="456789" value=""required>
+                                </div>
+                                <div class="col-md-3 mb-3 form-group">
+                                    <select class="form-control" id="phoneTypeEdit">
+                                        <option>HOME</option>
+                                        <option>WORK</option>
+                                        <option>CELL</option>
+                                        <option>FAX</option>
+                                        <option>OTHER</option>
+                                    </select>
+                                </div>  
+                            </div>
+                        </li>
                         <li class="list-group-item l-item">Phone 2</li>
                     </ul>
-                    <h6>Dates</h6>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item l-item">Date 1</li>
+                    <h6>Dates
+                        <button id="date-add" class="btn side-button add-button">
+                            <span class="fa fa-plus-circle"></span>
+                        </button>
+                    </h6>
+                    <ul id="date-details" class="list-group list-group-flush">
+                        <li class="list-group-item l-item">
+                            Date 1
+                            <div id="dateEdit" class="form-row detail-edit">
+                                <div class="col-md-6 mb-3 form-group">
+                                    <input type="text" class="form-control" id="dateEdit" placeholder="1999-09-09" value=""required>
+                                </div>
+                                <div class="col-md-3 mb-3 form-group">
+                                    <select class="form-control" id="phoneTypeEdit">
+                                        <option>BDAY</option>
+                                        <option>ANNIV</option>
+                                        <option>OTHER</option>
+                                    </select>
+                                </div>  
+                            </div>
+                        </li>
                         <li class="list-group-item l-item">Date 2</li>
                     </ul>
                 </ul>
                 <button type="button" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#exampleModal">New Contact</button>
-                <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#exampleModal">Edit Contact</button>
             </div>
             <div class="col-md-5 " id="list-pane">
                 <div class="form-group has-search">
