@@ -105,7 +105,7 @@ $("#saveNameButtonPress").click(function(){
 
     /*db update*/
     $.post(
-        "update_insert_contacts.php",
+        "update_contact.php",
         {
             contact_id: c_id,
             first_name: fn,
@@ -262,14 +262,127 @@ function setEditFields(table, details, elt_id){
 
 function saveButtonPressed(button_target){
     const psis = button_target.getAttribute("id").split("-");
-    if (psis[2] == "new"){
-        document.getElementById(psis[1] + "NewEditListItem").remove();
+    const details = getFormDetails(psis[1], psis[2]);
+    if (hasChanged(details)){//always true for edit
+        if (psis[2] == "new") {
+            /*create request with new details*/
+            sendCreateEltRequest(capitalize(psis[1]), details);
+        }
+        else {
+            //document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
+            //document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+            sendUpdateEltRequest(capitalize(psis[1]), details, psis[2]);
+        }
     }
-    else{
-        document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
-        document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
+    
+    
+}
 
+function hasChanged(details){
+    for (item in details){
+        if (item !== ""){
+            return true;
+        }
     }
+    return false;
+}
+
+function getFormDetails(elt, elt_id){
+    let details  = {};
+    switch (elt){
+        case "address": 
+            details.address = document.getElementById("addEdit-" + elt_id).value;
+            details.city = document.getElementById("cityEdit-" + elt_id).value;
+            details.state = document.getElementById("stateEdit-" + elt_id).value;
+            details.zip = document.getElementById("zipEdit-" + elt_id).value;
+            details.type = document.getElementById("addTypeEdit-" + elt_id).value;
+        break;
+        case "date":
+            details.date = document.getElementById("calDateEdit-" + elt_id).value;
+            details.type = document.getElementById("dateTypeEdit-" + elt_id).value;
+        break;
+        case "phone": 
+            details.areaCode = document.getElementById("areaCodeEdit-" + elt_id).value;
+            details.number = document.getElementById("numberEdit-" + elt_id).value;
+            details.type = document.getElementById("phoneTypeEdit-" + elt_id).value;
+        break;
+    }
+    return details;
+}
+
+function sendUpdateEltRequest(table, details, elt_id){
+
+    details.contact_id = document.querySelector("[data-id]").getAttribute("data-id");
+    details.elt_id = elt_id;
+    
+    /*db create elt*/
+    $.post(
+        "update_" + table.toLowerCase() + ".php",
+        details
+    ).done(function(data){
+        console.log(data);
+        /*create detail elt*/
+        let new_elt_entry = "";
+        switch (table){
+            case "Address": 
+                new_elt_entry = elt_id + "#" + details.type + "#" + details.address + "#" + details.city + "#" + details.state + "#" + details.zip;
+            break;
+            case "Date":
+                new_elt_entry = elt_id + "#" + details.type + "#" + details.date;        
+            break;
+            case "Phone": 
+                new_elt_entry = elt_id + "#" + details.type + "#" + details.areaCode + "#" + details.number;        
+            break;
+        }
+        document.getElementById([table.toLowerCase() + "Show", elt_id].join("-")).parentNode.remove();
+        addDetail(table, [new_elt_entry]);
+        /*update detail metadata in list item*/
+        let l_item = document.getElementById(details.contact_id);
+        let elt_details = l_item.getAttribute("data-"+table.toLowerCase()).split("|");
+        elt_details = elt_details.filter(function(value, index, arr){return value.indexOf(elt_id) === -1});
+        elt_details.push(new_elt_entry);
+        l_item.setAttribute("data-"+table.toLowerCase(), elt_details.join("|"));
+
+    });
+}
+
+function sendCreateEltRequest(table, details){
+
+    details.contact_id = document.querySelector("[data-id]").getAttribute("data-id");
+    /*db create elt*/
+    $.post(
+        "insert_" + table.toLowerCase() + ".php",
+        details
+    ).done(function(new_elt_id){//data should have new id of created elt
+        document.getElementById(table.toLowerCase() + "NewEditListItem").remove();
+        /*create detail elt*/
+        let new_elt_entry = "";
+        switch (table){
+            case "Address": 
+                new_elt_entry = new_elt_id + "#" + details.type + "#" + details.address + "#" + details.city + "#" + details.state + "#" + details.zip;
+            break;
+            case "Date":
+                new_elt_entry = new_elt_id + "#" + details.type + "#" + details.date;        
+            break;
+            case "Phone": 
+                new_elt_entry = new_elt_id + "#" + details.type + "#" + details.areaCode + "#" + details.number;        
+            break;
+        }
+        addDetail(table, [new_elt_entry]);
+        /*update detail metadata in list item*/
+        let l_item = document.getElementById(details.contact_id);
+        if (null != l_item.getAttribute("data-"+table.toLowerCase()) ){
+            if (l_item.getAttribute("data-"+table.toLowerCase()) ==""){
+                l_item.setAttribute("data-"+table.toLowerCase(), new_elt_entry);
+            }
+            else{
+                l_item.setAttribute("data-"+table.toLowerCase(), l_item.getAttribute("data-"+table.toLowerCase()) + "|" + new_elt_entry);
+            }
+        }
+        else{
+            l_item.setAttribute("data-"+table.toLowerCase(), new_elt_entry);
+        }
+    });
 }
 
 function delButtonPressed(button_target){
@@ -278,10 +391,45 @@ function delButtonPressed(button_target){
         document.getElementById(psis[1] + "NewEditListItem").remove();
     }
     else{
-        document.getElementById([psis[1] + "Show", psis[2]].join("-")).style.display = "block";
-        document.getElementById([psis[1] + "Edit", psis[2]].join("-")).style.display = "none";
-    
+        
+        let details = {};
+        let contact_id = document.querySelector("[data-id]").getAttribute("data-id");
+        details.elt_id = psis[2];
+        details.table = capitalize(psis[1]);
+        /*db delete elt*/
+        $.post(
+            "delete_elt.php",
+            details
+        ).done(function(delete_result){
+            console.log(delete_result);
+            /*do when delete is successful*/
+            document.getElementById([psis[1] + "Show", psis[2]].join("-")).parentNode.remove();
+
+            /*remove from detail metadata in list item*/
+            let l_item = document.getElementById(contact_id);
+            let elt_details = l_item.getAttribute("data-"+psis[1]).split("|");
+            elt_details = elt_details.filter(function(value, index, arr){return value.indexOf(psis[2]) === -1});
+            if (elt_details.length === 0){
+                l_item.setAttribute("data-"+psis[1], "");
+            }
+            else{
+                l_item.setAttribute("data-"+psis[1], elt_details.join("|"));
+            }
+
+                
+        });
     }
+}
+
+function removeDetail(elt_details, elt_id){
+    let target = "";
+    for (item of elt_details){
+        if (item.indexOf(elt_id) !== -1){
+            target = item;
+            break;
+        }
+    }
+    if (target !== "") elt_details.remove
 }
 
 function setDetails(anchor_target){
@@ -435,4 +583,9 @@ function setNameMany(name){
     }
     $("#Mname").text(middle);
     $("#Lname").text(name[name.length -2] + name[name.length -1]);
+}
+
+function capitalize(s){
+    if (typeof s !== 'string') return '';
+    return s.charAt(0).toUpperCase() + s.slice(1)
 }
